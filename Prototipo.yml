@@ -1,0 +1,56 @@
+---
+openapi: "3.0.2"
+info:
+  title: "provaCaos_1"
+  description: "Primo tentativo di integrazione tra OpenApi e Caos non è completo, ma vuole esporre i tratti salienti dell'idea che c'è" 
+servers: @localhost 
+paths:
+  /insegnamento: 
+    x-get-all: #sarebbe un'operazione, di quelle di default della nostra espansione
+      summary: "Restituisce una collezione con tutti gli insegnamenti visibili a quell'attore"
+      tags:
+      -!studente
+      -!docente
+      -!amministrativo
+  /prenotazione:
+    get: null #mettere di default get: null può essere un workaround
+
+components:
+  operations:
+    x-get-all: 
+      [cose varie]
+    x-complete-view:
+      [cose varie]
+    x-archiviation:
+      [cose varie]
+    eccetera
+
+tags: #Gli attori diventano casi particolari di tag, preceduti dal simbolo '!''
+  -!studente:
+    insegnamento #qui manterrei la ridondanza, per non abusare delle $ref
+  -!docente:
+    insegnamento
+  -!amministrativo
+
+x-navigation: #un esempio molto improvvisato, prendere con le pinze
+#              in questo caso non userei i $ref per non rimandare eccessivamente ai component
+  autenticazione:
+    -studente:
+      -header
+      -menu:
+        link-to: "autenticazione"
+      -avvisi
+      -footer
+    -insegnante:
+      -header
+      -menu:
+        link-to: "autenticazione"
+      -calendario
+      -footer
+    -amministrativo:
+      -header
+      -menu:
+        link-to: "autenticazione"
+
+#un altro modo per risolvere il problema di attore che usa operazione x potrebbe essere con i tag definendo quindi un concetto-attore
+...
