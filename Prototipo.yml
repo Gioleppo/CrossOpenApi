@@ -4,7 +4,7 @@ info:
   title: "provaCaos_1"
   description: "Primo tentativo di integrazione tra OpenApi e Caos non è completo, ma vuole esporre i tratti salienti dell'idea che c'è" 
 servers: @localhost 
-paths:
+paths: #il path non è solo il concetto, ma è l'unione di concetto e operaione
   /insegnamento: 
     x-get-all: #sarebbe un'operazione, di quelle di default della nostra espansione
       summary: "Restituisce una collezione con tutti gli insegnamenti visibili a quell'attore"
@@ -53,4 +53,8 @@ x-navigation: #un esempio molto improvvisato, prendere con le pinze
         link-to: "autenticazione"
 
 #un altro modo per risolvere il problema di attore che usa operazione x potrebbe essere con i tag definendo quindi un concetto-attore
+#dobbiamo contemplare i casi di errore che per noi sono codici 400, sia per casi generici che specifici
+#le operazioni personalizzate devono sempre essere specificate sotto forma di path
+
+#appuntamento fisso giovedì alle 15, previo avviso
 ...
