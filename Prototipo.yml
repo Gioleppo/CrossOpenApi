@@ -1,60 +1,87 @@
 ---
-openapi: "3.0.2"
+openapi: 3.0.2
 info:
-  title: "provaCaos_1"
-  description: "Primo tentativo di integrazione tra OpenApi e Caos non è completo, ma vuole esporre i tratti salienti dell'idea che c'è" 
-servers: @localhost 
-paths: #il path non è solo il concetto, ma è l'unione di concetto e operaione
-  /insegnamento: 
-    x-get-all: #sarebbe un'operazione, di quelle di default della nostra espansione
-      summary: "Restituisce una collezione con tutti gli insegnamenti visibili a quell'attore"
+  title: Prova-CROSS
+  description: "Descrizione dell'esempio studenti on line, con l'aggiunta degli elementi di CROSS. L'esempio è validato dall'app di Swagger hub. Per questioni di semplicità considereremo solo gli attori Insegnante e Studente"
+  version: "3.0.0-oas3"
+
+servers:
+  - url: https://studenti.unibo.it/sol/welcome.htm
+    description: Ipotizziamo che ci sia un'unico punto di login
+
+paths: #il path per noi rappresenta il concetto
+  /insegnamento:
+    get: #qui abbiamo il problema con le convenzioni sulle operazioni
+      summary: ritorna la lista degli insegnamenti
+      description: >-
+        Ritorna la lista degli insegnamenti coerentemente con il ruolo, per esempio
+        uno studente vedrà tutti gli insegnamenti nel suo piano di studio, mentre un
+        docente vedrà gli insegnamenti di cui è titolare e che sono attivi
       tags:
-      -!studente
-      -!docente
-      -!amministrativo
-  /prenotazione:
-    get: null #mettere di default get: null può essere un workaround
+        - ~studente
+        - ~docente
+      parameters:
+        - name: filtri
+          required: true #per qualche motivo deve per forza essere true
+          in: path
+          description: Una lista di filtri da applicare alla ricerca
+          schema:
+            items:
+              type : string
+      responses:
+        '200':
+          description: un JSON con la lista degli esami e annessi attributi
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  type: string
+  /appello:
+    get:
+      summary: ritorna la lista degli appelli disponibili
+      tags:
+        - ~studente
+        - ~docente
+      responses:
+        '200':
+          description: ritorna gli appelli disponibili di tutti gli esami
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  type: string
 
-components:
-  operations:
-    x-get-all: 
-      [cose varie]
-    x-complete-view:
-      [cose varie]
-    x-archiviation:
-      [cose varie]
-    eccetera
+tags: #Gli attori (roles) diventano casi particolari di tag, preceduti dal simbolo tilde '~'
+  - name: ~studente
+    description: Chiunque sia iscritto a un corso di laurea, laurea magistrale o dottorato
+  - name: ~docente
+    description: Chiunque sia o sia stato titolare di un corso. Comprende tutte le categoire
+  - name: ~amministrativo
+    description: Qualunque impiegato con ruoli di segreteria o contabilità includendo gli operatori dei vari sportelli
 
-tags: #Gli attori diventano casi particolari di tag, preceduti dal simbolo '!''
-  -!studente:
-    insegnamento #qui manterrei la ridondanza, per non abusare delle $ref
-  -!docente:
-    insegnamento
-  -!amministrativo
 
-x-navigation: #un esempio molto improvvisato, prendere con le pinze
-#              in questo caso non userei i $ref per non rimandare eccessivamente ai component
+x-navigation:
   autenticazione:
-    -studente:
+    -studente: 
       -header
-      -menu:
-        link-to: "autenticazione"
+      -menu
       -avvisi
       -footer
     -insegnante:
       -header
-      -menu:
-        link-to: "autenticazione"
+      -menu
       -calendario
       -footer
     -amministrativo:
       -header
-      -menu:
-        link-to: "autenticazione"
+      -menu
 
-#un altro modo per risolvere il problema di attore che usa operazione x potrebbe essere con i tag definendo quindi un concetto-attore
 #dobbiamo contemplare i casi di errore che per noi sono codici 400, sia per casi generici che specifici
 #le operazioni personalizzate devono sempre essere specificate sotto forma di path
+
+#dato che i campi personalizzati possono essere inseriti in paths e in responses, è lì che dobbiamo inserire le informazioni su che attore fa cosa su quale concetto
 
 #appuntamento fisso giovedì alle 15, previo avviso
 ...
