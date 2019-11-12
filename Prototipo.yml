@@ -6,12 +6,12 @@ info:
   version: "3.0.0-oas3"
 
 servers:
-  - url: https://studenti.unibo.it/sol/welcome.htm
+  - url: https://almaesami.unibo.it/almaesami/welcome.htm
     description: Ipotizziamo che ci sia un'unico punto di login
 
 paths: #il path per noi rappresenta il concetto
   /insegnamento:
-    get: #qui abbiamo il problema con le convenzioni sulle operazioni
+    get:
       summary: ritorna la lista degli insegnamenti
       description: >-
         Ritorna la lista degli insegnamenti coerentemente con il ruolo, per esempio
@@ -37,7 +37,47 @@ paths: #il path per noi rappresenta il concetto
                 type: array
                 items: 
                   type: string
-  /appello:
+  /cds/{corsodistudio}/AY/{2019}/insegnamenti/{codiceins}/appelli/1234:
+    get:
+      summary: ritorna L'appello dal codice 1234
+      tags:
+        - ~studente
+        - ~docente
+      responses:
+        '200':
+          description: Vengono correttamente ritornate tutte le informazioni sull'appello 1234
+          
+  /cds/{corsodistudio}/AY/{2019}/insegnamenti/{codiceins}/appelli/1234/ridotta:
+    get:
+      summary: ritorna L'appello dal codice 1234
+      tags:
+        - ~studente
+        - ~docente
+      responses:
+        '200':
+          description: Ritorna una vista ridotta dell'appello 1234
+
+  /cds/{corsodistudio}/AY/{2019}/insegnamenti/{codiceins}/appelli/1234/data:
+    get:
+      summary: ritorna la data del'appello dal codice 1234
+      tags:
+        - ~studente
+        - ~docente
+      responses:
+        '200':
+          description: Ritorna una vista ridotta dell'appello 1234
+    put:
+      summary: modifica la data dell'appello 1234
+      tags:
+        - ~docente #in questo caso sto dicendo che solo un docente può eseguire questa operazione
+                   #se chiamato da altri attori deve ritornare un codice 403
+      responses:
+        '200':
+          description: Modifica la data dell'appello 1234
+        '400':
+          description: Nel caso la data non fosse modificabile ritorna un errore
+  
+  /cds/{corsodistudio}/AY/{2019}/insegnamenti/{codiceins}/appelli/1234/listaiscritti/:
     get:
       summary: ritorna la lista degli appelli disponibili
       tags:
@@ -77,11 +117,32 @@ x-navigation:
     -amministrativo:
       -header
       -menu
-
-#dobbiamo contemplare i casi di errore che per noi sono codici 400, sia per casi generici che specifici
-#le operazioni personalizzate devono sempre essere specificate sotto forma di path
-
 #dato che i campi personalizzati possono essere inseriti in paths e in responses, è lì che dobbiamo inserire le informazioni su che attore fa cosa su quale concetto
 
 #appuntamento fisso giovedì alle 15, previo avviso
 ...
+
+
+
+
+
+
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA======================================================================================
+parameters:
+      - name: corsodistudio
+        in: path
+        description: "Id del corso di studio"
+        type: string
+        required: true
+      
+      - name: "2019"
+        in: path
+        description: "Valore dell'anno accademico"
+        type: number
+        required: true
+      
+      - name: codiceins
+        in: path
+        description: "Id dell'insegnamento"
+        type: string
+        required: true
