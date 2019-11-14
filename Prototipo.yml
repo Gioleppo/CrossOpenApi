@@ -3,41 +3,37 @@ openapi: 3.0.2
 info:
   title: Prova-CROSS
   description: "Descrizione dell'esempio studenti on line, con l'aggiunta degli elementi di CROSS. L'esempio è validato dall'app di Swagger hub. Per questioni di semplicità considereremo solo gli attori Insegnante e Studente"
-  version: "3.0.0-oas3"
+  version: "Cross3.2.0-oas3"
 
 servers:
   - url: https://almaesami.unibo.it/almaesami/welcome.htm
     description: Ipotizziamo che ci sia un'unico punto di login
 
 paths: #il path per noi rappresenta il concetto
-  /insegnamento:
-    get:
-      summary: ritorna la lista degli insegnamenti
-      description: >-
-        Ritorna la lista degli insegnamenti coerentemente con il ruolo, per esempio
-        uno studente vedrà tutti gli insegnamenti nel suo piano di studio, mentre un
-        docente vedrà gli insegnamenti di cui è titolare e che sono attivi
-      tags:
-        - ~studente
-        - ~docente
-      parameters:
-        - name: filtri
-          required: true #per qualche motivo deve per forza essere true
-          in: path
-          description: Una lista di filtri da applicare alla ricerca
-          schema:
-            items:
-              type : string
-      responses:
-        '200':
-          description: un JSON con la lista degli esami e annessi attributi
-          content:
-            application/json:
-              schema: 
-                type: array
-                items: 
-                  type: string
+
   /cds/{corsodistudio}/AY/{2019}/insegnamenti/{codiceins}/appelli/1234:
+    parameters: #necessari quando si usano dei parametri nel path
+      - name: corsodistudio
+        in: path
+        description: "Id del corso di studio"
+        required: true
+        schema:
+          type: string
+      
+      - name: "2019"
+        in: path
+        description: "Valore dell'anno accademico"
+        required: true
+        schema:
+          type: number
+      
+      - name: codiceins
+        in: path
+        description: "Id dell'insegnamento"
+        required: true
+        schema:
+          type: string
+          
     get:
       summary: ritorna L'appello dal codice 1234
       tags:
@@ -48,6 +44,28 @@ paths: #il path per noi rappresenta il concetto
           description: Vengono correttamente ritornate tutte le informazioni sull'appello 1234
           
   /cds/{corsodistudio}/AY/{2019}/insegnamenti/{codiceins}/appelli/1234/ridotta:
+    parameters:
+      - name: corsodistudio
+        in: path
+        description: "Id del corso di studio"
+        required: true
+        schema:
+          type: string
+      
+      - name: "2019"
+        in: path
+        description: "Valore dell'anno accademico"
+        required: true
+        schema:
+          type: number
+      
+      - name: codiceins
+        in: path
+        description: "Id dell'insegnamento"
+        required: true
+        schema:
+          type: string
+  
     get:
       summary: ritorna L'appello dal codice 1234
       tags:
@@ -58,6 +76,27 @@ paths: #il path per noi rappresenta il concetto
           description: Ritorna una vista ridotta dell'appello 1234
 
   /cds/{corsodistudio}/AY/{2019}/insegnamenti/{codiceins}/appelli/1234/data:
+    parameters:
+      - name: corsodistudio
+        in: path
+        description: "Id del corso di studio"
+        required: true
+        schema:
+          type: string
+      
+      - name: "2019"
+        in: path
+        description: "Valore dell'anno accademico"
+        required: true
+        schema:
+          type: number
+      
+      - name: codiceins
+        in: path
+        description: "Id dell'insegnamento"
+        required: true
+        schema:
+          type: string
     get:
       summary: ritorna la data del'appello dal codice 1234
       tags:
@@ -78,6 +117,28 @@ paths: #il path per noi rappresenta il concetto
           description: Nel caso la data non fosse modificabile ritorna un errore
   
   /cds/{corsodistudio}/AY/{2019}/insegnamenti/{codiceins}/appelli/1234/listaiscritti/:
+    parameters:
+      - name: corsodistudio
+        in: path
+        description: "Id del corso di studio"
+        required: true
+        schema:
+          type: string
+      
+      - name: "2019"
+        in: path
+        description: "Valore dell'anno accademico"
+        required: true
+        schema:
+          type: number
+      
+      - name: codiceins
+        in: path
+        description: "Id dell'insegnamento"
+        required: true
+        schema:
+          type: string
+    
     get:
       summary: ritorna la lista degli appelli disponibili
       tags:
@@ -101,12 +162,21 @@ tags: #Gli attori (roles) diventano casi particolari di tag, preceduti dal simbo
   - name: ~amministrativo
     description: Qualunque impiegato con ruoli di segreteria o contabilità includendo gli operatori dei vari sportelli
 
+components:
+  x-navigation:
+    menu-studente:
+      -riepilogo
+      -prenotazioni
+      -bacheca-esiti
+      -piano-di-studio
+      -statistiche
 
+#in questi campi privati non vuole che metta $ref o commenti di alcun ché, bisogna trovare un workaround
 x-navigation:
   autenticazione:
     -studente: 
       -header
-      -menu
+      -$ref: '#/components/x-navigation/menu-studente'
       -avvisi
       -footer
     -insegnante:
@@ -117,32 +187,4 @@ x-navigation:
     -amministrativo:
       -header
       -menu
-#dato che i campi personalizzati possono essere inseriti in paths e in responses, è lì che dobbiamo inserire le informazioni su che attore fa cosa su quale concetto
-
-#appuntamento fisso giovedì alle 15, previo avviso
 ...
-
-
-
-
-
-
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA======================================================================================
-parameters:
-      - name: corsodistudio
-        in: path
-        description: "Id del corso di studio"
-        type: string
-        required: true
-      
-      - name: "2019"
-        in: path
-        description: "Valore dell'anno accademico"
-        type: number
-        required: true
-      
-      - name: codiceins
-        in: path
-        description: "Id dell'insegnamento"
-        type: string
-        required: true
