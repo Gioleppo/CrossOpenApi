@@ -162,29 +162,38 @@ tags: #Gli attori (roles) diventano casi particolari di tag, preceduti dal simbo
   - name: ~amministrativo
     description: Qualunque impiegato con ruoli di segreteria o contabilità includendo gli operatori dei vari sportelli
 
+#Attenzione ai trattini dopo gli spazi nelle liste, altrimenti il parser implode
 components:
   x-navigation:
     menu-studente:
-      -riepilogo
-      -prenotazioni
-      -bacheca-esiti
-      -piano-di-studio
-      -statistiche
+      id: "men0"
+      description: "Menù dei contenuti dell'interfaccia del role studente"
+      content:
+        - riepilogo
+        - prenotazioni
+        - bacheca-esiti
+        - piano-di-studio
+        - statistiche
 
 #in questi campi privati non vuole che metta $ref o commenti di alcun ché, bisogna trovare un workaround
 x-navigation:
   autenticazione:
-    -studente: 
-      -header
-      -$ref: '#/components/x-navigation/menu-studente'
-      -avvisi
-      -footer
-    -insegnante:
-      -header
-      -menu
-      -calendario
-      -footer
-    -amministrativo:
-      -header
-      -menu
+  
+    studente: 
+      - header:
+        id: xk1
+        description: common header (potrebbe corrispondere allo header html)
+        
+      - $ref: "#/components/x-navigation/menu-studente"
+      - avvisi
+      - footer
+      - nome
+    insegnante:
+      - header
+      - menu
+      - calendario
+      - footer
+    amministrativo:
+      - header
+      - menu
 ...
