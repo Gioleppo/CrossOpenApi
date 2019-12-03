@@ -11,6 +11,78 @@ servers:
 
 paths: #il path per noi rappresenta il concetto
 
+  /cds/{corsodistudio}/AY/{2019}/insegnamenti/{codiceins}/appelli/:
+    parameters: #necessari quando si usano dei parametri nel path
+      - name: corsodistudio
+        in: path
+        description: "Id del corso di studio"
+        required: true
+        schema:
+          type: string
+      
+      - name: "2019"
+        in: path
+        description: "Valore dell'anno accademico"
+        required: true
+        schema:
+          type: number
+      
+      - name: codiceins
+        in: path
+        description: "Id dell'insegnamento"
+        required: true
+        schema:
+          type: string
+          
+    post:
+      summary: crea un nuovo appello per l'insegnamento
+      
+      parameters:
+        - name: data
+          in: query
+          description: tags to filter by
+          required: false
+          style: form
+          schema:
+            $ref: "#/components/schemas/simple-string"
+        - name: ora
+          in: query
+          description: tags to filter by
+          required: false
+          style: form
+          schema:
+            $ref: "#/components/schemas/simple-string"
+            
+        - name: aula
+          in: query
+          description: tags to filter by
+          required: false
+          style: form
+          schema:
+            $ref: "#/components/schemas/simple-string"
+        - name: commissione
+          in: query
+          description: tags to filter by
+          required: false
+          style: form
+          schema:
+            type: array
+            items:
+              type: string
+      tags:
+        - ~docente
+      x-auto: false
+      x-number: 1
+      x-default: none #può assumere o il valore none oppure una lista di valori di default
+                      #che popolernno i campi nell'ordine in cui sono specificati i parametri
+      x-persistent: true
+          
+      responses:
+        '200':
+          description: Messaggio di correttaorretta creazione dell'appello
+        
+          
+
   /cds/{corsodistudio}/AY/{2019}/insegnamenti/{codiceins}/appelli/1234:
     parameters: #necessari quando si usano dei parametri nel path
       - name: corsodistudio
@@ -39,9 +111,27 @@ paths: #il path per noi rappresenta il concetto
       tags:
         - ~studente
         - ~docente
+      
       responses:
         '200':
           description: Vengono correttamente ritornate tutte le informazioni sull'appello 1234
+          #Si omette lo schema dell'oggetto ritornato per questioni di verbosità
+    delete:
+      summary: Cancella l'istanza 1234 di un appello
+      description: >-
+        "Cancella l\'istanza 1234 del concetto appello:: se la data dell\'
+        appello è posteriore a quella odierna cancella definitivamente, 
+        altrimenti archivia. L'archiviazione è automatica"
+      tags: 
+        - ~docente
+      x-auto: true #in caso di archiviazione
+      x-cross-case:
+        - permanent #se la data è posteriore a quella odierda
+        - archiviation #se la data è quella odierna o precedente
+        
+      responses:
+        '200':
+          description: Notifica l'avvenuta cancellazione
           
   /cds/{corsodistudio}/AY/{2019}/insegnamenti/{codiceins}/appelli/1234/ridotta:
     parameters:
@@ -54,14 +144,14 @@ paths: #il path per noi rappresenta il concetto
       
       - name: "2019"
         in: path
-        description: "Valore dell'anno accademico"
+        description: Valore dell'anno accademico
         required: true
         schema:
           type: number
       
       - name: codiceins
         in: path
-        description: "Id dell'insegnamento"
+        description: Id dell'insegnamento
         required: true
         schema:
           type: string
@@ -74,6 +164,7 @@ paths: #il path per noi rappresenta il concetto
       responses:
         '200':
           description: Ritorna una vista ridotta dell'appello 1234
+      
 
   /cds/{corsodistudio}/AY/{2019}/insegnamenti/{codiceins}/appelli/1234/data:
     parameters:
@@ -110,6 +201,7 @@ paths: #il path per noi rappresenta il concetto
       tags:
         - ~docente #in questo caso sto dicendo che solo un docente può eseguire questa operazione
                    #se chiamato da altri attori deve ritornare un codice 403
+      x-auto: false
       responses:
         '200':
           description: Modifica la data dell'appello 1234
@@ -144,6 +236,7 @@ paths: #il path per noi rappresenta il concetto
       tags:
         - ~studente
         - ~docente
+      x-cross-case: list
       responses:
         '200':
           description: ritorna gli appelli disponibili di tutti gli esami
@@ -164,6 +257,11 @@ tags: #Gli attori (roles) diventano casi particolari di tag, preceduti dal simbo
 
 #Attenzione ai trattini dopo gli spazi nelle liste, altrimenti il parser implode
 components:
+  schemas:
+    simple-string:
+      type: string
+      nullable: false
+      
   x-navigation:
     menu-studente:
       id: "men0"
@@ -194,6 +292,5 @@ x-navigation:
       - calendario
       - footer
     amministrativo:
-      - header
-      - menu
+      #Si omette per ragioni di verbosità
 ...
